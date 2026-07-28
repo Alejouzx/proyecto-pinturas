@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Acrilinco</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- HEADER / NAVBAR -->
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <h1>🎨 Acrilinco</h1>
+                </div>
+                <nav class="menu">
+                    <a href="../index.html">Inicio</a>
+                    <a href="catalogo.html" class="active">Catálogo</a>
+                    <a href="recomendador.html">Recomendador IA</a>
+                    <a href="contacto.html">Contacto</a>
+                </nav>
+                <div class="carrito-icon">
+                    <a href="carrito.html">
+                        🛒 Carrito (<span id="carrito-count">0</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <section class="catalogo-section">
+            <h2 style="color: #033380; margin: 2rem 0; text-align: center;">Catálogo de Pinturas Acrilinco</h2>
+            
+            <!-- FILTROS -->
+            <div class="filtros" style="margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <input 
+                    type="text" 
+                    id="filtro-nombre" 
+                    placeholder="Buscar por nombre..." 
+                    class="filtro-input"
+                    style="padding: 0.75rem; border: 1px solid #bdc3c7; border-radius: 5px;"
+                >
+                <select id="filtro-tipo" class="filtro-select" style="padding: 0.75rem; border: 1px solid #bdc3c7; border-radius: 5px;">
+                    <option value="">Todos los tipos</option>
+                    <option value="mate">Mate</option>
+                    <option value="satinada">Satinada</option>
+                    <option value="brillante">Brillante</option>
+                </select>
+                <select id="filtro-rango-precio" class="filtro-select" style="padding: 0.75rem; border: 1px solid #bdc3c7; border-radius: 5px;">
+                    <option value="">Todos los precios</option>
+                    <option value="0-50000">$0 - $50.000</option>
+                    <option value="50000-100000">$50.000 - $100.000</option>
+                    <option value="100000-200000">$100.000 - $200.000</option>
+                </select>
+            </div>
+
+            <!-- GRID DE PRODUCTOS -->
+            <div id="productos-container" class="productos-grid">
+                <p class="loading">Cargando productos...</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Acrilinco. Todos los derechos reservados.</p>
+            <p>📍 Ubicación: Medellín, Antioquia - Colombia</p>
+            <p>
+                <a href="https://wa.me/573001234567" target="_blank">WhatsApp</a> | 
+                <a href="mailto:info@acrilinco.com">Email</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="../js/api.js"></script>
+    <script>
+        // Cargar productos al abrir la página
+        async function cargarCatalogo() {
+            try {
+                const response = await fetch('/api/productos');
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error cargando productos:', error);
+                document.getElementById('productos-container').innerHTML = 
+                    '<p style="text-align: center; color: #E74C3C;">Error al cargar los productos</p>';
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const container = document.getElementById('productos-container');
+            if (productos.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No hay productos disponibles</p>';
+                return;
+            }
+
+            container.innerHTML = productos.map(p => `
+                <div class="producto-card">
+                    <div class="producto-img">🎨</div>
+                    <div class="producto-info">
+                        <h4>${p.nombre}</h4>
+                        <p><strong>Tipo:</strong> ${p.tipo || '-'}</p>
+                        <p><strong>Acabado:</strong> ${p.acabado || '-'}</p>
+                        <p style="color: ${p.color || '#000'};">● ${p.color || 'Color'}</p>
+                        <div class="producto-precio">$${p.precio.toLocaleString()}</div>
+                        <button class="btn-agregar" onclick="agregarCarrito(${p.id})">
+                            🛒 Agregar al carrito
+                        </button>
+                        <a href="producto.html?id=${p.id}" style="display: block; margin-top: 0.5rem; color: #033380; text-align: center; font-weight: bold;">
+                            Ver detalles →
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function agregarCarrito(productId) {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const item = carrito.find(i => i.id === productId);
+            
+            if (item) {
+                item.cantidad++;
+            } else {
+                carrito.push({ id: productId, cantidad: 1 });
+            }
+            
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarContadorCarrito();
+            alert('✅ Producto agregado al carrito');
+        }
+
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('carrito-count').textContent = total;
+        }
+
+        // Al cargar la página
+        window.addEventListener('load', () => {
+            cargarCatalogo();
+            actualizarContadorCarrito();
+        });
+    </script>
+</body>
+</html>

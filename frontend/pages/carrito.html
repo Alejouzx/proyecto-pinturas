@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito - Acrilinco</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- HEADER / NAVBAR -->
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <h1>🎨 Acrilinco</h1>
+                </div>
+                <nav class="menu">
+                    <a href="../index.html">Inicio</a>
+                    <a href="catalogo.html">Catálogo</a>
+                    <a href="recomendador.html">Recomendador IA</a>
+                    <a href="contacto.html">Contacto</a>
+                </nav>
+                <div class="carrito-icon">
+                    <a href="carrito.html" class="active">
+                        🛒 Carrito (<span id="carrito-count">0</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <section style="margin: 3rem 0;">
+            <h2 style="color: #033380; text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">
+                🛒 Tu Carrito de Compras
+            </h2>
+
+            <div class="carrito-container">
+                <div id="carrito-items" class="carrito-items">
+                    <p class="loading">Cargando carrito...</p>
+                </div>
+
+                <div id="carrito-vacio" style="text-align: center; padding: 3rem; display: none;">
+                    <p style="font-size: 3rem; margin-bottom: 1rem;">🛒</p>
+                    <p style="color: #7f8c8d; font-size: 1.2rem; margin-bottom: 1.5rem;">Tu carrito está vacío</p>
+                    <a href="catalogo.html" class="btn btn-primary">Ver Catálogo</a>
+                </div>
+
+                <div id="carrito-resumen" style="display: none;">
+                    <div class="carrito-total">
+                        Total: $<span id="carrito-total-monto">0</span>
+                    </div>
+
+                    <button id="btn-checkout" class="btn btn-success btn-checkout">
+                        💬 Finalizar pedido por WhatsApp
+                    </button>
+
+                    <button id="btn-vaciar" style="width: 100%; margin-top: 1rem; padding: 0.75rem; background-color: transparent; color: #E74C3C; border: 1px solid #E74C3C; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        🗑️ Vaciar carrito
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Acrilinco. Todos los derechos reservados.</p>
+            <p>📍 Ubicación: Medellín, Antioquia - Colombia</p>
+            <p>
+                <a href="https://wa.me/573001234567" target="_blank">WhatsApp</a> | 
+                <a href="mailto:info@acrilinco.com">Email</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="../js/api.js"></script>
+    <script>
+        let productosCarrito = [];
+
+        async function cargarCarrito() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            
+            if (carrito.length === 0) {
+                document.getElementById('carrito-items').style.display = 'none';
+                document.getElementById('carrito-vacio').style.display = 'block';
+                document.getElementById('carrito-resumen').style.display = 'none';
+                return;
+            }
+
+            try {
+                // Obtener detalles de cada producto
+                const promesas = carrito.map(item => 
+                    fetch(`/api/productos/${item.id}`).then(res => res.json())
+                );
+                const productos = await Promise.all(promesas);
+                
+                productosCarrito = carrito.map((item, index) => ({
+                    ...item,
+                    ...productos[index]
+                }));
+
+                mostrarCarrito();
+            } catch (error) {
+                console.error('Error cargando carrito:', error);
+            }
+        }
+
+        function mostrarCarrito() {
+            const container = document.getElementById('carrito-items');
+            
+            container.innerHTML = productosCarrito.map(item => `
+                <div class="carrito-item">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="font-size: 2.5rem;">🎨</div>
+                        <div>
+                            <h4 style="color: #033380;">${item.nombre}</h4>
+                            <p style="color: #7f8c8d; font-size: 0.9rem;">
+                                Cantidad: 
+                                <button onclick="cambiarCantidad(${item.id}, -1)" style="margin: 0 0.5rem; padding: 0.2rem 0.6rem; background: #ecf0f1; border: none; border-radius: 3px; cursor: pointer;">-</button>
+                                <span>${item.cantidad}</span>
+                                <button onclick="cambiarCantidad(${item.id}, 1)" style="margin: 0 0.5rem; padding: 0.2rem 0.6rem; background: #ecf0f1; border: none; border-radius: 3px; cursor: pointer;">+</button>
+                            </p>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="color: #fd5017; font-weight: bold; font-size: 1.2rem;">
+                            $${(item.precio * item.cantidad).toLocaleString()}
+                        </p>
+                        <button onclick="eliminarItem(${item.id})" style="color: #E74C3C; background: none; border: none; cursor: pointer; font-size: 0.9rem; margin-top: 0.5rem;">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('carrito-items').style.display = 'block';
+            document.getElementById('carrito-vacio').style.display = 'none';
+            document.getElementById('carrito-resumen').style.display = 'block';
+
+            calcularTotal();
+        }
+
+        function calcularTotal() {
+            const total = productosCarrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('carrito-total-monto').textContent = total.toLocaleString();
+        }
+
+        function cambiarCantidad(productId, cambio) {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const item = carrito.find(i => i.id === productId);
+            
+            if (item) {
+                item.cantidad += cambio;
+                if (item.cantidad <= 0) {
+                    carrito = carrito.filter(i => i.id !== productId);
+                }
+            }
+            
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            cargarCarrito();
+            actualizarContadorCarrito();
+        }
+
+        function eliminarItem(productId) {
+            let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            carrito = carrito.filter(i => i.id !== productId);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            cargarCarrito();
+            actualizarContadorCarrito();
+        }
+
+        document.getElementById('btn-vaciar').addEventListener('click', () => {
+            if (confirm('¿Estás seguro de vaciar el carrito?')) {
+                localStorage.setItem('carrito', JSON.stringify([]));
+                cargarCarrito();
+                actualizarContadorCarrito();
+            }
+        });
+
+        document.getElementById('btn-checkout').addEventListener('click', () => {
+            let mensaje = 'Hola Acrilinco, quiero hacer el siguiente pedido:%0A%0A';
+            
+            productosCarrito.forEach(item => {
+                mensaje += `- ${item.nombre} x${item.cantidad} = $${(item.precio * item.cantidad).toLocaleString()}%0A`;
+            });
+
+            const total = productosCarrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            mensaje += `%0ATotal: $${total.toLocaleString()}`;
+
+            window.location.href = `https://wa.me/573001234567?text=${mensaje}`;
+        });
+
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('carrito-count').textContent = total;
+        }
+
+        window.addEventListener('load', () => {
+            cargarCarrito();
+            actualizarContadorCarrito();
+        });
+    </script>
+</body>
+</html>

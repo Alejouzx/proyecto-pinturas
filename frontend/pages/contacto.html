@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Acrilinco</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- HEADER / NAVBAR -->
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <h1>🎨 Acrilinco</h1>
+                </div>
+                <nav class="menu">
+                    <a href="../index.html">Inicio</a>
+                    <a href="catalogo.html">Catálogo</a>
+                    <a href="recomendador.html">Recomendador IA</a>
+                    <a href="contacto.html" class="active">Contacto</a>
+                </nav>
+                <div class="carrito-icon">
+                    <a href="carrito.html">
+                        🛒 Carrito (<span id="carrito-count">0</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <section style="margin: 3rem 0;">
+            <h2 style="color: #033380; text-align: center; font-size: 2.5rem; margin-bottom: 2rem;">
+                Contacta con Acrilinco
+            </h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-bottom: 3rem;">
+                <!-- INFORMACIÓN DE CONTACTO -->
+                <div>
+                    <h3 style="color: #033380; margin-bottom: 1.5rem;">📞 Información de Contacto</h3>
+                    
+                    <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-left: 4px solid #fd5017;">
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #033380; margin-bottom: 0.5rem;">📱 WhatsApp</h4>
+                            <a href="https://wa.me/573001234567" target="_blank" style="color: #27AE60; font-weight: bold; font-size: 1.1rem;">
+                                +57 300 123 4567
+                            </a>
+                            <p style="color: #7f8c8d; margin-top: 0.5rem; font-size: 0.9rem;">Disponible 24/7 para tus consultas</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #033380; margin-bottom: 0.5rem;">📧 Email</h4>
+                            <a href="mailto:info@acrilinco.com" style="color: #033380; font-weight: bold;">
+                                info@acrilinco.com
+                            </a>
+                            <p style="color: #7f8c8d; margin-top: 0.5rem; font-size: 0.9rem;">Respondemos en máximo 2 horas</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #033380; margin-bottom: 0.5rem;">📍 Ubicación</h4>
+                            <p style="color: #2C3E50; font-weight: 500;">Medellín, Antioquia</p>
+                            <p style="color: #7f8c8d; font-size: 0.9rem;">Colombia</p>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <h4 style="color: #033380; margin-bottom: 0.5rem;">⏰ Horario</h4>
+                            <p style="color: #2C3E50;">Lunes a Viernes: 8:00 AM - 6:00 PM</p>
+                            <p style="color: #2C3E50;">Sábados: 9:00 AM - 2:00 PM</p>
+                            <p style="color: #2C3E50;">Domingos: Cerrado</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FORMULARIO DE CONTACTO -->
+                <div>
+                    <h3 style="color: #033380; margin-bottom: 1.5rem;">✉️ Envíanos un mensaje</h3>
+                    
+                    <form id="formulario-contacto" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <label for="nombre" style="color: #033380; font-weight: bold;">Nombre completo</label>
+                        <input type="text" id="nombre" name="nombre" required style="margin-bottom: 1rem;">
+
+                        <label for="email" style="color: #033380; font-weight: bold;">Correo electrónico</label>
+                        <input type="email" id="email" name="email" required style="margin-bottom: 1rem;">
+
+                        <label for="telefono" style="color: #033380; font-weight: bold;">Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" style="margin-bottom: 1rem;">
+
+                        <label for="asunto" style="color: #033380; font-weight: bold;">Asunto</label>
+                        <select id="asunto" name="asunto" required style="margin-bottom: 1rem;">
+                            <option value="">Selecciona un asunto</option>
+                            <option value="consulta">Consulta general</option>
+                            <option value="presupuesto">Solicitar presupuesto</option>
+                            <option value="problema">Reportar problema</option>
+                            <option value="sugerencia">Sugerencia</option>
+                        </select>
+
+                        <label for="mensaje" style="color: #033380; font-weight: bold;">Mensaje</label>
+                        <textarea id="mensaje" name="mensaje" rows="5" required style="margin-bottom: 1rem;"></textarea>
+
+                        <button type="submit" style="width: 100%; padding: 0.75rem; background-color: #fd5017; color: white; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;">
+                            Enviar mensaje
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DE PREGUNTAS FRECUENTES -->
+            <section style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 3rem;">
+                <h3 style="color: #033380; text-align: center; margin-bottom: 2rem;">❓ Preguntas Frecuentes</h3>
+                
+                <div style="display: grid; gap: 1.5rem;">
+                    <div style="border-left: 4px solid #fd5017; padding-left: 1rem;">
+                        <h4 style="color: #033380;">¿Cuál es el tiempo de entrega?</h4>
+                        <p style="color: #7f8c8d;">Entregamos en 24-48 horas en Medellín y área metropolitana. Consulta para otras zonas.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #fd5017; padding-left: 1rem;">
+                        <h4 style="color: #033380;">¿Ofrecen presupuestos personalizados?</h4>
+                        <p style="color: #7f8c8d;">Sí, puedes solicitar un presupuesto por WhatsApp o usando el formulario de contacto.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #fd5017; padding-left: 1rem;">
+                        <h4 style="color: #033380;">¿Tienen garantía en los productos?</h4>
+                        <p style="color: #7f8c8d;">Todos nuestros productos cuentan con garantía de calidad. Consulta términos específicos.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #fd5017; padding-left: 1rem;">
+                        <h4 style="color: #033380;">¿Puedo cambiar o devolver un producto?</h4>
+                        <p style="color: #7f8c8d;">Sí, aceptamos cambios y devoluciones en los primeros 7 días con el producto sin usar.</p>
+                    </div>
+
+                    <div style="border-left: 4px solid #fd5017; padding-left: 1rem;">
+                        <h4 style="color: #033380;">¿Cómo funcionan los presupuestos?</h4>
+                        <p style="color: #7f8c8d;">Nuestro sistema calcula automáticamente el costo de material y mano de obra basado en tus necesidades.</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Acrilinco. Todos los derechos reservados.</p>
+            <p>📍 Ubicación: Medellín, Antioquia - Colombia</p>
+            <p>
+                <a href="https://wa.me/573001234567" target="_blank">WhatsApp</a> | 
+                <a href="mailto:info@acrilinco.com">Email</a> |
+                <a href="contacto.html">Contacto</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="../js/api.js"></script>
+    <script>
+        document.getElementById('formulario-contacto').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const telefono = document.getElementById('telefono').value;
+            const asunto = document.getElementById('asunto').value;
+            const mensaje = document.getElementById('mensaje').value;
+
+            const texto = `Hola Acrilinco,%0A%0ANombre: ${nombre}%0AEmail: ${email}%0ATelefono: ${telefono}%0AAsunto: ${asunto}%0A%0AMensaje:%0A${mensaje}`;
+            
+            window.location.href = `https://wa.me/573001234567?text=${texto}`;
+        });
+
+        function actualizarContadorCarrito() {
+            const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+            const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('carrito-count').textContent = total;
+        }
+
+        window.addEventListener('load', () => {
+            actualizarContadorCarrito();
+        });
+    </script>
+</body>
+</html>
