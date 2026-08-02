@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producto - Acrilinco</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+    <!-- HEADER / NAVBAR -->
+    <header class="navbar">
+        <div class="container">
+            <div class="navbar-content">
+                <div class="logo">
+                    <h1>🎨 Acrilinco</h1>
+                </div>
+                <nav class="menu">
+                    <a href="../index.html">Inicio</a>
+                    <a href="catalogo.html">Catálogo</a>
+                    <a href="recomendador.html">Recomendador IA</a>
+                    <a href="contacto.html">Contacto</a>
+                </nav>
+                <div class="carrito-icon">
+                    <a href="carrito.html">
+                        🛒 Carrito (<span id="carrito-count">0</span>)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+        <section class="producto-detalle">
+            <a href="catalogo.html" style="color: #033380; margin-bottom: 1rem; font-weight: bold;">← Volver al catálogo</a>
+            
+            <div class="producto-detalle-grid">
+                <!-- IMAGEN DEL PRODUCTO -->
+                <div class="producto-imagen">
+                    <div class="imagen-grande">🎨</div>
+                    <p style="text-align: center; margin-top: 1rem; color: #7f8c8d;">
+                        Pintura Acrilinco Premium
+                    </p>
+                </div>
+
+                <!-- INFORMACIÓN DEL PRODUCTO -->
+                <div class="producto-info-detalle">
+                    <h1 id="producto-nombre" style="color: #033380;">Cargando...</h1>
+                    
+                    <div class="producto-rating">
+                        <span style="color: #f39c12;">⭐ 4.5 (45 reseñas)</span>
+                    </div>
+
+                    <div class="producto-precio-grande">
+                        <span id="producto-precio" style="color: #fd5017;">$0</span>
+                    </div>
+
+                    <div class="producto-caracteristicas">
+                        <p><strong>Tipo:</strong> <span id="producto-tipo">-</span></p>
+                        <p><strong>Acabado:</strong> <span id="producto-acabado">-</span></p>
+                        <p><strong>Color:</strong> <span id="producto-color">-</span></p>
+                        <p><strong>Stock disponible:</strong> <span id="producto-stock" style="color: #27AE60; font-weight: bold;">-</span></p>
+                    </div>
+
+                    <div class="producto-descripcion">
+                        <h3 style="color: #033380;">Descripción</h3>
+                        <p id="producto-descripcion">Cargando descripción...</p>
+                    </div>
+
+                    <!-- CANTIDAD Y AGREGAR -->
+                    <div class="cantidad-selector">
+                        <label for="cantidad" style="color: #033380; font-weight: bold;">Cantidad:</label>
+                        <div class="cantidad-control">
+                            <button id="btn-menos" onclick="decrementarCantidad()" style="background-color: #ecf0f1; color: #033380;">−</button>
+                            <input type="number" id="cantidad" value="1" min="1" style="border-color: #033380;">
+                            <button id="btn-mas" onclick="incrementarCantidad()" style="background-color: #ecf0f1; color: #033380;">+</button>
+                        </div>
+                    </div>
+
+                    <button id="btn-agregar-carrito" class="btn btn-primary" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+                        🛒 Agregar al carrito
+                    </button>
+
+                    <button id="btn-presupuesto" class="btn btn-success" style="width: 100%; padding: 1rem; margin-top: 1rem;">
+                        💰 Solicitar presupuesto
+                    </button>
+                </div>
+            </div>
+
+            <!-- SECCIÓN DE RECOMENDADOS -->
+            <section class="recomendados" style="margin-top: 4rem;">
+                <h3 style="color: #033380; text-align: center; margin-bottom: 2rem;">Productos relacionados</h3>
+                <div id="productos-relacionados" class="productos-grid">
+                    <p class="loading">Cargando productos relacionados...</p>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Acrilinco. Todos los derechos reservados.</p>
+            <p>📍 Ubicación: Medellín, Antioquia - Colombia</p>
+            <p>
+                <a href="https://wa.me/573001234567" target="_blank">WhatsApp</a> | 
+                <a href="mailto:info@acrilinco.com">Email</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="../js/carrito.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        let productoActual = null;
+
+        // Obtener ID del producto de la URL
+        function obtenerIdProducto() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Cargar detalles del producto
+        async function cargarProducto() {
+            const id = obtenerIdProducto();
+            if (!id) {
+                document.querySelector('.producto-detalle').innerHTML = 
+                    '<p style="text-align: center; color: #E74C3C; font-size: 1.2rem;">Producto no encontrado</p>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/productos/${id}`);
+                productoActual = await response.json();
+                mostrarProducto(productoActual);
+                cargarProductosRelacionados(productoActual.categoria?.nombre);
+            } catch (error) {
+                console.error('Error cargando producto:', error);
+            }
+        }
+
+        function mostrarProducto(producto) {
+            document.getElementById('producto-nombre').textContent = producto.nombre;
+            document.getElementById('producto-precio').textContent =
+                '$' + formatearPrecio(producto.precio);
+            document.getElementById('producto-tipo').textContent = nombreCategoria(producto);
+            document.getElementById('producto-acabado').textContent = nombreAcabado(producto);
+            document.getElementById('producto-color').textContent = colorProducto(producto);
+            document.getElementById('producto-stock').textContent = producto.stock ?? '0';
+            document.getElementById('producto-descripcion').textContent = 
+                producto.descripcion || 'Pintura premium de Acrilinco. Consulta detalles con nuestro equipo.';
+        }
+
+        function incrementarCantidad() {
+            const input = document.getElementById('cantidad');
+            input.value = parseInt(input.value) + 1;
+        }
+
+        function decrementarCantidad() {
+            const input = document.getElementById('cantidad');
+            if (input.value > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        document.getElementById('btn-agregar-carrito').addEventListener('click', () => {
+            const cantidad = parseInt(document.getElementById('cantidad').value);
+            agregarAlCarrito(productoActual.id, cantidad);
+            alert(`✅ ${cantidad} unidad(es) de "${productoActual.nombre}" agregada(s) al carrito`);
+        });
+
+        document.getElementById('btn-presupuesto').addEventListener('click', () => {
+            const cantidad = document.getElementById('cantidad').value;
+            const mensaje = `Hola Acrilinco, quiero un presupuesto para ${cantidad} unidad(es) de: ${productoActual.nombre} ($${productoActual.precio})`;
+            window.location.href = `https://wa.me/573001234567?text=${encodeURIComponent(mensaje)}`;
+        });
+
+        async function cargarProductosRelacionados(categoria) {
+            if (!categoria) return;
+
+            try {
+                const response = await fetch(`/api/productos?categoria=${encodeURIComponent(categoria)}`);
+                const productos = await response.json();
+                const filtrados = productos.filter(p => p.id !== productoActual.id).slice(0, 4);
+
+                const container = document.getElementById('productos-relacionados');
+                if (filtrados.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">No hay productos relacionados</p>';
+                    return;
+                }
+
+                container.innerHTML = filtrados.map(p => `
+                    <div class="producto-card">
+                        <div class="producto-img" style="background:${hexProducto(p)};">🎨</div>
+                        <div class="producto-info">
+                            <h4>${p.nombre}</h4>
+                            <p>${nombreCategoria(p)}</p>
+                            <div class="producto-precio">$${formatearPrecio(p.precio)}</div>
+                            <a href="producto.html?id=${p.id}" class="btn btn-primary" style="display: block; text-align: center;">
+                                Ver detalles
+                            </a>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error cargando relacionados:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            cargarProducto();
+            actualizarContadorCarrito();
+        });
+    </script>
+
+    <style>
+        .producto-detalle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin: 2rem 0;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .producto-imagen {
+            text-align: center;
+        }
+
+        .imagen-grande {
+            font-size: 8rem;
+            background: linear-gradient(135deg, #033380 0%, #fd5017 100%);
+            padding: 3rem;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .producto-rating {
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .producto-precio-grande {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .producto-caracteristicas {
+            background-color: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            border-left: 4px solid #fd5017;
+        }
+
+        .producto-caracteristicas p {
+            margin: 0.5rem 0;
+            color: #2C3E50;
+        }
+
+        .producto-descripcion {
+            margin: 2rem 0;
+        }
+
+        .cantidad-control {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .cantidad-control button {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #bdc3c7;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .cantidad-control button:hover {
+            background-color: #fd5017;
+            color: white;
+            border-color: #fd5017;
+        }
+
+        .cantidad-control input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #bdc3c7;
+            padding: 0.5rem;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .producto-detalle-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</body>
+</html>

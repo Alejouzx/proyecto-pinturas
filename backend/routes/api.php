@@ -1,3 +1,10 @@
+<?php
+
+use App\Http\Controllers\ProductoController;
+use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ChatbotController;
+
 Route::get('/productos', [ProductoController::class, 'index']);
 Route::post('/productos', [ProductoController::class, 'store']);
 Route::get('/productos/{id}', [ProductoController::class, 'show']);
@@ -11,3 +18,4 @@ Route::put('/pedidos/{id}', [PedidoController::class, 'update']);
 
 Route::get('/usuarios', [UsuarioController::class, 'index']);
 Route::post('/usuarios', [UsuarioController::class, 'store']);
+Route::post('/whatsapp', [ChatbotController::class, 'receive']);

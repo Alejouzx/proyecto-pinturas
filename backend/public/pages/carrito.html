@@ -78,12 +78,13 @@
     </footer>
 
     <!-- SCRIPTS -->
+<script src="../js/carrito.js"></script>
 <script src="../js/api.js"></script>
 <script>
     let productosCarrito = [];
 
     async function cargarCarrito() {
-        const carritoIds = JSON.parse(localStorage.getItem('carrito_acrilinco')) || [];
+        const carritoIds = obtenerCarrito();
         const container = document.getElementById('carrito-items');
         const resumen = document.getElementById('carrito-resumen');
         const vacio = document.getElementById('carrito-vacio');
@@ -127,7 +128,7 @@
                 </div>
                 <div style="text-align: right;">
                     <p style="color: #fd5017; font-weight: bold; font-size: 1.2rem;">
-                        ${formatearPrecio(parseFloat(item.precio) * item.cantidad)}
+                        $${formatearPrecio(parseFloat(item.precio) * item.cantidad)}
                     </p>
                     <button onclick="eliminarItem(${item.id})" style="color: #E74C3C; background: none; border: none; cursor: pointer; font-size: 0.9rem;">
                         🗑️ Eliminar
@@ -145,26 +146,25 @@
     }
 
     function cambiarCantidad(productId, cambio) {
-        let carrito = JSON.parse(localStorage.getItem('carrito_acrilinco')) || [];
+        let carrito = obtenerCarrito();
         const item = carrito.find(i => i.id === productId);
         if (item) {
             item.cantidad += cambio;
             if (item.cantidad <= 0) carrito = carrito.filter(i => i.id !== productId);
         }
-        localStorage.setItem('carrito_acrilinco', JSON.stringify(carrito));
+        guardarCarrito(carrito);
         cargarCarrito();
     }
 
     function eliminarItem(productId) {
-        let carrito = JSON.parse(localStorage.getItem('carrito_acrilinco')) || [];
-        carrito = carrito.filter(i => i.id !== productId);
-        localStorage.setItem('carrito_acrilinco', JSON.stringify(carrito));
+        let carrito = obtenerCarrito().filter(i => i.id !== productId);
+        guardarCarrito(carrito);
         cargarCarrito();
     }
 
     document.getElementById('btn-vaciar').addEventListener('click', () => {
         if (confirm('¿Vaciar el carrito?')) {
-            localStorage.setItem('carrito_acrilinco', JSON.stringify([]));
+            guardarCarrito([]);
             cargarCarrito();
         }
     });
@@ -172,18 +172,12 @@
     document.getElementById('btn-checkout').addEventListener('click', () => {
         let mensaje = 'Hola Acrilinco, quiero hacer el siguiente pedido:%0A%0A';
         productosCarrito.forEach(item => {
-            mensaje += `- ${item.nombre} x${item.cantidad} = ${formatearPrecio(parseFloat(item.precio) * item.cantidad)}%0A`;
+            mensaje += `- ${item.nombre} x${item.cantidad} = $${formatearPrecio(parseFloat(item.precio) * item.cantidad)}%0A`;
         });
         const total = productosCarrito.reduce((sum, item) => sum + (parseFloat(item.precio) * item.cantidad), 0);
-        mensaje += `%0ATotal: ${formatearPrecio(total)}`;
+        mensaje += `%0ATotal: $${formatearPrecio(total)}`;
         window.location.href = `https://wa.me/573001234567?text=${mensaje}`;
     });
-
-    function actualizarContadorCarrito() {
-        const carrito = JSON.parse(localStorage.getItem('carrito_acrilinco')) || [];
-        const total = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-        document.querySelectorAll('#carrito-count').forEach(el => el.textContent = total);
-    }
 
     window.addEventListener('load', () => {
         cargarCarrito();
